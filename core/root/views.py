@@ -5,7 +5,7 @@ from django.contrib.auth import login
 from django.conf import settings
 import random
 
-# Foydalanuvchilarning tasdiqlash kodlarini vaqtinchalik saqlash
+
 verification_codes = {}
 
 def register(request):
@@ -13,11 +13,9 @@ def register(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
         
-        # Tasodifiy 6 xonali kod yaratish
         verification_code = str(random.randint(100000, 999999))
         verification_codes[email] = {"code": verification_code, "password": password}
         
-        # Emailga kodni yuborish
         send_mail(
             "Email tasdiqlash kodi",
             f"Sizning tasdiqlash kodingiz: {verification_code}",
@@ -41,8 +39,8 @@ def verify_code(request, email):
             user.save()
             login(request, user)
 
-            del verification_codes[email]  # Tasdiqlash kodini o‘chiramiz
-            return redirect("success")  # success sahifasiga yo‘naltiramiz
+            del verification_codes[email] 
+            return redirect("success")  
 
         else:
             return render(request, "verify_code.html", {"email": email, "error": "Kod noto‘g‘ri!"})
